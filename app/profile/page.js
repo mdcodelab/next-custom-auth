@@ -1,13 +1,8 @@
-import { getUser } from "../lucia";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 async function ProfilePage() {
-  const user = await getUser();
-  if (!user) {
-    redirect("/");
-  }
-  console.log(user);
+  
   return (
     <div>
       <h1>Profile page</h1>

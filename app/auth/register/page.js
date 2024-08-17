@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Label } from "@radix-ui/react-label";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { createUser } from "@/app/actions";
-import GoogleOathButton from "@/components/ui/GoogleOathButton";
+import { register } from "@/app/actions";
+
 
 function RegisterPage() {
   
@@ -17,11 +17,10 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createUser(name, email, password, rePassword);
+      await register(name, email, password, rePassword);
       toast.success("Account created successfully!");
       // router.push("/auth/login");
     } catch (error) {
-
       toast.error(error.message);
     }
   };
@@ -65,8 +64,7 @@ function RegisterPage() {
 
         <Button type="submit" className="w-full py-2 my-2">Create an account</Button>
       </form>
-      <p className="text-center my-2">Or, continue with Google</p>
-        <GoogleOathButton></GoogleOathButton>
+      
       <div
         className="flex mx-auto justify-between bordered border-black mt-2"
         style={{ width: "max-content" }}

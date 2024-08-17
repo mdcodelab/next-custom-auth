@@ -6,7 +6,6 @@ import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "@/app/actions";
-import GoogleOathButton from "@/components/ui/GoogleOathButton";
 
 function LoginPage() {
     const [password, setPassword]=useState("");
@@ -62,8 +61,6 @@ function LoginPage() {
             Login
           </Button>
         </form>
-        <p className="text-center my-2">Or, continue with Google</p>
-        <GoogleOathButton></GoogleOathButton>
         <div
           className="flex mx-auto justify-between bordered border-black mt-2"
           style={{ width: "max-content" }}
