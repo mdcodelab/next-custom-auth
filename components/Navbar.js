@@ -7,9 +7,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 import SignOutButton from "./SignOutButton";
+import { getUserFromToken} from "../app/actions"
+import { cookies } from "next/headers";
 
 async function Navbar() {
-let user="";
+  // Accesarea cererii HTTP folosind cookies în app router
+  const cookieStore = cookies();
+  const authToken = cookieStore.get("auth_token")?.value;
+
+  let user = null;
+  if (authToken) {
+    try {
+      user = await getUserFromToken(authToken);
+      console.log(user);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  }
+
+
   if (!user) {
     return (
       <nav className="w-full h-[5rem] bg-black flex items-center justify-end pr-8">
@@ -37,7 +53,7 @@ let user="";
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem className="text-center w-[200px]">
-          <SignOutButton>Sign Out</SignOutButton>
+            <SignOutButton>Sign Out</SignOutButton>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+
+
 async function ProfilePage() {
   
   return (
@@ -11,4 +13,4 @@ async function ProfilePage() {
   )
 }
 
-export default ProfilePage
+export default ProfilePage;
