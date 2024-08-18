@@ -73,6 +73,36 @@ export async function signOut() {
 
 
 export const login = async (email, password) => {
+const existingUser = await prisma.user.findUnique({
+  where: {
+    email: email
+  }
+})
 
+console.log(existingUser);
+if(!existingUser) {
+throw new Error("Invalid email or password.");
+}
+
+const isPasswordValid = await bcrypt.compare(password, existingUser.hashedPassword);
+if(!isPasswordValid) {
+  throw new Error("Invalid password.");
+}
+
+// generate a JWT token
+  const token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+// store the token in a cookie
+  cookies().set("auth_token", token, {
+    httpOnly: true, // Cookie-ul este accesibil doar serverului
+    secure: process.env.NODE_ENV === "production", // Cookie-ul este securizat doar în producție
+    sameSite: "strict", // Cookie-ul este accesibil doar pe același site
+    path: "/",
+    maxAge: 3600, // Cookie-ul expiră după 1 oră
+  });
+
+  redirect("/profile");
 }
 

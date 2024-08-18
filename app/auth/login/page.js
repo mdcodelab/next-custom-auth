@@ -16,6 +16,7 @@ function LoginPage() {
         e.preventDefault();
         try {
           await login(email, password);
+          console.log(email, password);
           toast.success("Logged in successfully!")
         } catch (error) {
           console.error("error", error);
