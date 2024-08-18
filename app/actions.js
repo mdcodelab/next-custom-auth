@@ -65,9 +65,11 @@ export async function getUserFromToken(authToken) {
   }
 }
 
-
-
-
+ 
+ 
+export async function signOut() {
+  cookies().delete('auth_token')
+}
 
 
 export const login = async (email, password) => {
