@@ -10,36 +10,47 @@ import axios from "axios";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 
-// export async function sendVerificationEmail(email, emailToken) {
-//   const transporter = nodemailer.createTransport({
-//     host: "smtp-mail.outlook.com",
-//     port: 587,
-//     secure: false, // true pentru port 465, false pentru port 587
-//     auth: {
-//       user: "d_mihaela@msn.com", // Adresa ta Yahoo
-//       pass: process.env.USER_PASS, // Parola contului sau Parola de aplicație
-//     },
-//   });
+export async function sendVerificationEmail(email, verificationUrl) {
+  const apiKey = process.env.BREVO_KEY;
 
-//   const verificationUrl = `http://localhost:3000/api/verify-email?token=${emailToken}`;
+  try {
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "My app",
+          email: "mhl_dcn@yahoo.fr",
+        },
+        to: [
+          {
+            email: email, 
+            name: "mihaela",
+          },
+        ],
+        subject: "Email verification",
+        htmlContent: `<html><head></head><body><p>Hello,</p>
+                      <p>Please complete your registration by clicking the link below:</p>
+                      <a href="${verificationUrl}">Verify Your Email</a>
+                      <p>If you did not request this, please ignore this email.</p>
+                      </body></html>`,
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "api-key": apiKey,
+          "content-type": "application/json",
+        },
+      }
+    );
 
-//   const mailOptions = {
-//     from: `"My App" <${process.env.USER_EMAIL}>`, // Adresa ta de email Yahoo
-//     to: email,
-//     subject: "Verify your email",
-//     html: `<p>Please verify your email by clicking the following link:</p>
-//            <a href="${verificationUrl}">Verify Email</a>`,
-//   };
+    console.log("Email sent successfully:", response.data);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+}
 
-//   try {
-//     await transporter.sendMail(mailOptions);
-//     console.log("Verification email sent successfully.");
-//   } catch (error) {
-//     console.error("Error sending verification email:", error);
-//   }
-// }
 
-// Funcția de înregistrare
+
 export const register = async (name, email, password, rePassword) => {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -56,65 +67,22 @@ export const register = async (name, email, password, rePassword) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+
   const emailToken = uuidv4();
 
-  // const user = await prisma.user.create({
-  //   data: {
-  //     name: name,
-  //     email: email,
-  //     hashedPassword: hashedPassword,
-  //     emailToken: emailToken,
-  //     emailVerified: false,
-  //   },
-  // });
-
-  //await sendVerificationEmail(user.email, emailToken);
-  await sendEmail(email);
-
+  const user = await prisma.user.create({
+    data: {
+      name: name,
+      email: email,
+      hashedPassword: hashedPassword,
+      emailToken: emailToken,
+      emailVerified: false,
+    },
+  });
+const verificationUrl = `http://localhost:3000/api/verify-email?token=${emailToken}`;
+  await sendVerificationEmail(user.email, verificationUrl);
+  redirect("/message-email");
 }
-
-
-
-
-  async function sendEmail(recipientEmail) {
-    const apiKey = process.env.BREVO_KEY; // Make sure your API key is stored in an environment variable
-
-    try {
-      const response = await axios.post(
-        "https://api.brevo.com/v3/smtp/email",
-        {
-          sender: {
-            name: "Sender Alex",
-            email: "mhl_dcn@yahoo.fr",
-          },
-          to: [
-            {
-              email: recipientEmail,
-              name: "mihaela",
-            },
-          ],
-          subject: "Hello world",
-          htmlContent:
-            "<html><head></head><body><p>Hello,</p>This is my first transactional email sent from Brevo.</p></body></html>",
-        },
-        {
-          headers: {
-            accept: "application/json",
-            "api-key": apiKey,
-            "content-type": "application/json",
-          },
-        }
-      );
-
-      console.log("Email sent successfully:", response.data);
-    } catch (error) {
-      console.error("Error sending email:", error);
-    }
-  }
-
-
-
-
 
 
 export async function getUserFromToken(authToken) {
