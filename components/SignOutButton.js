@@ -9,7 +9,9 @@ function SignOutButton({ children }) {
   };
 
   return (
-    <Button className="w-[150px] mx-auto" onClick={handleSignOut}>
+    <Button className="w-[150px] mx-auto block bg-white text-black hover:bg-transparent bordered
+     border-black text-md" 
+    onClick={handleSignOut} style={{paddingTop: "-0.5rem", paddingBottom: "-0.5rem"}}>
       {children}
     </Button>
   );

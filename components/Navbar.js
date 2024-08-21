@@ -44,15 +44,15 @@ async function Navbar() {
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="h-[2.5rem] text-lg"
-            style={{ width: "max-content" }}
+            className="h-[2.5rem] text-md"
+            style={{ minWidth: "200px", whiteSpace: "nowrap" }}
           >
             {user?.email}
             <span className="sr-only">User menu</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem className="text-center w-[200px]">
+          <DropdownMenuItem className="text-center min-w-[200px]">
             <SignOutButton>Sign Out</SignOutButton>
           </DropdownMenuItem>
         </DropdownMenuContent>
