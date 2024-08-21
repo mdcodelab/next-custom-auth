@@ -70,7 +70,7 @@ function LoginPage() {
           className="flex mx-auto justify-between bordered border-black mt-2 text-sm"
           style={{ width: "max-content" }}>
           <p>Forgot your password?</p>
-          <Link href="/changePassword">Change your password here.</Link>
+          <Link href="/api/changePassword">Change your password here.</Link>
         </div>
           </div>
 
