@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getUserFromToken } from "../actions";
 import { cookies } from "next/headers";
 
 
