@@ -8,8 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
-
+//SEND VERIFICATION EMAIL
 export async function sendVerificationEmail(email, verificationUrl) {
   const apiKey = process.env.BREVO_KEY;
 
@@ -50,7 +49,7 @@ export async function sendVerificationEmail(email, verificationUrl) {
 }
 
 
-
+//REGISTER
 export const register = async (name, email, password, rePassword) => {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -84,52 +83,9 @@ const verificationUrl = `http://localhost:3000/api/verify-email?token=${emailTok
   redirect("/message-email");
 }
 
-export async function generateJWTandCookie (existingUser) {
-  // generate a JWT token
-  const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
-  const jwtToken = jwt.sign(
-    { userId: existingUser.id, email: existingUser.email },
-    JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
-  );
-
-  // store the token in a cookie
-  cookies().set("auth_token", jwtToken, {
-    httpOnly: true, // Cookie-ul este accesibil doar serverului
-    secure: process.env.NODE_ENV === "production", // Cookie-ul este securizat doar în producție
-    sameSite: "strict", // Cookie-ul este accesibil doar pe același site
-    path: "/",
-    maxAge: 3600, // Cookie-ul expiră după 1 oră
-  });
-}
 
 
-export async function getUserFromToken(authToken) {
-  if (!authToken) {
-    throw new Error("No token found");
-  }
-
-  try {
-    const result = await request;
-    console.log("Verification email sent successfully.");
-    console.log(result.body); // Afișează răspunsul complet de la Mailjet
-    return result;
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Failed to send email");
-  }
-
-}
-
- 
- 
-export async function signOut() {
-  cookies().delete('auth_token')
-}
-
-
+//LOGIN
 export const login = async (email, password) => {
 const existingUser = await prisma.user.findUnique({
   where: {
@@ -147,7 +103,12 @@ if(!isPasswordValid) {
   throw new Error("Invalid password.");
 }
 
+if(!existingUser.emailToken) {
+throw new Error ("Please verify your email.");
+}
+
 // generate a JWT token
+const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
   const token = jwt.sign({ userId: existingUser.id, email: existingUser.email }, JWT_SECRET, {
     expiresIn: "1h",
   });
@@ -163,4 +124,28 @@ if(!isPasswordValid) {
 
   redirect("/profile");
 }
+
+
+export async function getUserFromToken(authToken) {
+  if (!authToken) {
+    throw new Error("No token found");
+  }
+
+  try {
+    const result = await request;
+    console.log("Verification email sent successfully.");
+    console.log(result.body); // Afișează răspunsul complet de la Mailjet
+    return result;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
+  }
+}
+
+
+
+export async function signOut() {
+  cookies().delete("auth_token");
+}
+
 
