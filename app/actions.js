@@ -122,6 +122,18 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
     maxAge: 3600, // Cookie-ul expiră după 1 oră
   });
 
+  const auth_token = cookies().set("auth_token", token, {
+    httpOnly: true, // Cookie-ul este accesibil doar serverului
+    secure: process.env.NODE_ENV === "production", // Cookie-ul este securizat doar în producție
+    sameSite: "strict", // Cookie-ul este accesibil doar pe același site
+    path: "/",
+    maxAge: 3600, // Cookie-ul expiră după 1 oră
+  });
+
+  if(!auth_token) {
+    throw new Error("No auth token");
+  }
+
   redirect("/profile");
 }
 
@@ -132,15 +144,28 @@ export async function getUserFromToken(authToken) {
   }
 
   try {
-    const result = await request;
-    console.log("Verification email sent successfully.");
-    console.log(result.body); // Afișează răspunsul complet de la Mailjet
-    return result;
+    const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
+    // Decodifică tokenul JWT pentru a obține informațiile utilizatorului
+    const decodedToken = jwt.verify(authToken, JWT_SECRET);
+
+    // Caută utilizatorul în baza de date după ID-ul din token
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decodedToken.userId,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
   } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Failed to send email");
+    console.error("Error retrieving user from token:", error);
+    throw new Error("Failed to retrieve user");
   }
 }
+
 
 
 
