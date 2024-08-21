@@ -138,6 +138,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
 }
 
 
+//GET USER FROM TOKEN (for profile page - protected & navbar)
 export async function getUserFromToken(authToken) {
   if (!authToken) {
     throw new Error("No token found");
@@ -168,9 +169,58 @@ export async function getUserFromToken(authToken) {
 
 
 
-
+//SIGN OUT
 export async function signOut() {
   cookies().delete("auth_token");
 }
 
 
+
+//change password
+export async function changePassword (email, newPassword, retypePassword) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Email not found.");
+  }
+
+  if (!user.emailVerified) {
+    throw new Error("You must verify your email first.");
+  }
+
+  if (newPassword !== retypePassword) {
+    throw new Error("Passwords must match.");
+  }
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+  await prisma.user.update({
+    where: {
+      email: email,
+    },
+    data: {
+      hashedPassword: hashedNewPassword,
+    },
+  });
+
+  //generate jwt token
+  const JWT_SECRET = process.env.JWT_SECRET || "secret_key";
+  const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  // store the token in a cookie
+  cookies().set("auth_token", token, {
+    httpOnly: true, // Cookie-ul este accesibil doar serverului
+    secure: process.env.NODE_ENV === "production", // Cookie-ul este securizat doar în producție
+    sameSite: "strict", // Cookie-ul este accesibil doar pe același site
+    path: "/",
+    maxAge: 3600, // Cookie-ul expiră după 1 oră
+  });
+
+  redirect("/profile");
+}
