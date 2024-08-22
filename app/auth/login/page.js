@@ -36,7 +36,8 @@ function LoginPage() {
         </h1>
         <form
           className="max-w-[350px] w-full shadow rounded-xl mx-auto"
-          onSubmit={handleSubmit}>
+          onSubmit={handleSubmit}
+        >
           <div className="w-75 mb-2">
             <Label htmlFor="email" className="text-xl font-semibold">
               Email:
@@ -67,17 +68,29 @@ function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             ></input>
             <div
-          className="flex mx-auto justify-between bordered border-black mt-2 text-sm"
-          style={{ width: "max-content" }}>
-          <p>Forgot your password?</p>
-          <Link href="/api/changePassword">Change your password here.</Link>
-        </div>
+              className="flex mx-auto justify-between bordered border-black mt-2 text-sm"
+              style={{ width: "max-content" }}
+            >
+              <p>Forgot your password?</p>
+              <Link href="/api/changePassword">Change your password here.</Link>
+            </div>
           </div>
 
-          <Button type="submit" className="w-full py-2 my-2 text-lg">
+          <Button type="submit" className="w-full py-4 my-2 mb-2 text-lg">
             Login
           </Button>
         </form>
+
+        <div className="w-75 my-2">
+          <p className="text-center mb-2">Or, you can login with Google:</p>
+          <Button className="py-4 w-full mb-2 flex items-center justify-center">
+            <img
+              src="/images/google.png"
+              style={{ width: "2rem", height: "2rem" }}
+            ></img>
+          </Button>
+        </div>
+
         <div
           className="flex mx-auto justify-between bordered border-black mt-2"
           style={{ width: "max-content" }}
