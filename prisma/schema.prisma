@@ -21,7 +21,8 @@ model User {
   emailVerified  Boolean @default(false)
   emailToken     String?
   role           String @default("user")
-  hashedPassword String
+  hashedPassword String?
+  picture String?
   session        Session[]
 }
 
