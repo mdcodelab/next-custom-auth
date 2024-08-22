@@ -5,6 +5,7 @@ import { Label } from "@radix-ui/react-label";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { register } from "@/app/actions";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 
 function RegisterPage() {
@@ -104,8 +105,7 @@ function RegisterPage() {
 
       <div className="w-75 mb-2">
         <p className="text-center mb-2">Or, you can register with Google:</p>
-        <Button className="py-4 w-full mb-2 flex items-center justify-center">
-        <img src="/images/google.png" style={{width: "2rem", height: "2rem"}}></img></Button>
+        <GoogleAuthButton></GoogleAuthButton>
       </div>
 
       <div

@@ -6,6 +6,7 @@ import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "@/app/actions";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 function LoginPage() {
     const [password, setPassword]=useState("");
@@ -83,12 +84,7 @@ function LoginPage() {
 
         <div className="w-75 my-2">
           <p className="text-center mb-2">Or, you can login with Google:</p>
-          <Button className="py-4 w-full mb-2 flex items-center justify-center">
-            <img
-              src="/images/google.png"
-              style={{ width: "2rem", height: "2rem" }}
-            ></img>
-          </Button>
+          <GoogleAuthButton></GoogleAuthButton>
         </div>
 
         <div
